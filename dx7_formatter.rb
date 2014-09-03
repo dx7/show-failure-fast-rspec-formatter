@@ -1,59 +1,47 @@
-# Rspec 2 formatter by rafaeldx7
-# Use: rspec --require "dx7_formatter.rb" --format Dx7Formatter -- ./spec/your_spec.rb
+# Rspec 3 formatter by dx7
+#
+# This formatter immediately shows the failure message when spec fails. Then you don't need
+# wait the final report to know about failures.
+#
+# You can use it directly in the command line:
+#   $ rspec --require "/path/to/dx7_formatter.rb" --format Dx7Formatter -- ./spec/your_spec.rb
+#
+# Or setting the SPEC_OPTS environment variable in your .bash_profile, .zshrc, etc:
+#   export SPEC_OPTS="--require ~/Projects/dx7-formatter/dx7_formatter.rb --format Dx7Formatter"
+#
+# Or wherever RSpec reads command line configuration options
+#   https://www.relishapp.com/rspec/rspec-core/docs/configuration/read-command-line-configuration-options-from-files
 
-require 'rspec/core/formatters/base_text_formatter'
+require 'rspec/core/formatters/progress_formatter'
 
-class Dx7Formatter < RSpec::Core::Formatters::BaseTextFormatter
+class Dx7Formatter < RSpec::Core::Formatters::ProgressFormatter
+  RSpec::Core::Formatters.register self, :example_failed, :dump_failures, :dump_summary
 
-  def index
-    @index ||= -1
-    @index += 1
+  def example_failed(notification)
+   output.puts notification.fully_formatted(index)
+   system_notification(notification.description, 'Rspec Failure/Error')
   end
 
-  def example_passed(example)
+  def dump_failures(notification)
+    # do nothing
+  end
+
+  def dump_summary(notification)
     super
-    output.print success_color('.')
+    message = notification.fully_formatted(RSpec::Core::Notifications::NullColorizer.new)
+    system_notification(message, 'Rspec')
   end
 
-  def example_pending(example)
-    super
-    output.print pending_color('*')
-  end
+  private
 
-  def example_failed(example)
-    super
-    output.puts
-    dump_failure(example, index)
-    dump_backtrace(example)
-    exception = example.execution_result[:exception]
-    `osascript -e 'display notification "#{exception.message.gsub(/"/, '\"')}" with title "Rspec Error"'`
-  end
+    def index
+      @index ||= 0
+      @index += 1
+    end
 
-  def start_dump
-    super
-    output.puts
-  end
-
-  def dump_failures
-  end
-
-  def dump_summary(duration, example_count, failure_count, pending_count)
-    super
-    `osascript -e 'display notification "#{summary_line(example_count, failure_count, pending_count)}" with title "Rspec Finished"'`
-  end
-
-  def close
-    super
-
-    image_color = if @failure_count > 0
-                    "red"
-                  elsif @pending_count > 0
-                    "yellow"
-                  elsif @example_count == 0
-                    "grey"
-                  else
-                    "green"
-                  end
-  end
-
+    def system_notification(message, title)
+      if RUBY_PLATFORM.match(/darwin/)
+        `osascript -e 'display notification "#{message}" with title "#{title}"'`
+      end
+    end
 end
