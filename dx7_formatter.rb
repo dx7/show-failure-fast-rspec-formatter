@@ -29,7 +29,7 @@ class Dx7Formatter < RSpec::Core::Formatters::ProgressFormatter
   def dump_summary(notification)
     super
     message = notification.fully_formatted(RSpec::Core::Notifications::NullColorizer)
-    system_notification(message, 'Rspec')
+    system_notification(message.split("\n").reverse.join("\n"), 'Rspec')
   end
 
   private
