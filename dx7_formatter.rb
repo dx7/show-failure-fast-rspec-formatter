@@ -17,9 +17,13 @@ require 'rspec/core/formatters/progress_formatter'
 class Dx7Formatter < RSpec::Core::Formatters::ProgressFormatter
   RSpec::Core::Formatters.register self, :example_failed, :dump_failures, :dump_summary
 
+  def project_name
+    @project_name ||= File.basename(Dir.pwd)
+  end
+
   def example_failed(notification)
    output.puts notification.fully_formatted(index)
-   system_notification(notification.description, 'Rspec Failure/Error')
+   system_notification(notification.description, "Rspec #{project_name}", 'Failure/Error')
   end
 
   def dump_failures(notification)
@@ -29,7 +33,7 @@ class Dx7Formatter < RSpec::Core::Formatters::ProgressFormatter
   def dump_summary(notification)
     super
     message = notification.fully_formatted(RSpec::Core::Notifications::NullColorizer)
-    system_notification(message.split("\n").reverse.join("\n"), 'Rspec')
+    system_notification(message.split("\n").reverse.join("\n"), "Rspec #{project_name}", 'Success')
   end
 
   private
@@ -39,9 +43,10 @@ class Dx7Formatter < RSpec::Core::Formatters::ProgressFormatter
       @index += 1
     end
 
-    def system_notification(message, title)
+    def system_notification(message, title, subtitle)
       if RUBY_PLATFORM.match(/darwin/)
-        `osascript -e 'display notification "#{message}" with title "#{title}"'`
+        #`osascript -e 'display notification "#{message}" with title "#{title}"'`
+        `terminal-notifier -group 'rspec-#{project_name}' -title '#{title}' -subtitle '#{subtitle}' -message '#{message}' -activate 'com.googlecode.iterm2' -sender 'com.googlecode.iterm2'`
       end
     end
 end
