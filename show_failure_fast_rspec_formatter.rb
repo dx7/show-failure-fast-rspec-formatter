@@ -4,17 +4,17 @@
 # wait the final report to know about failures.
 #
 # You can use it directly in the command line:
-#   $ rspec --require "/path/to/dx7_formatter.rb" --format Dx7Formatter -- ./spec/your_spec.rb
+#   $ rspec --require "/path/to/show_failure_fast_rspec_formatter.rb" --format ShowFailureFastRspecFormatter -- ./spec/your_spec.rb
 #
 # Or setting the SPEC_OPTS environment variable in your .bash_profile, .zshrc, etc:
-#   export SPEC_OPTS="--require ~/Projects/dx7-formatter/dx7_formatter.rb --format Dx7Formatter"
+#   export SPEC_OPTS="--require ~/Projects/show-failure-fast-rspec-formatter/show_failure_fast_rspec_formatter.rb --format ShowFailureFastRspecFormatter"
 #
 # Or wherever RSpec reads command line configuration options
 #   https://www.relishapp.com/rspec/rspec-core/docs/configuration/read-command-line-configuration-options-from-files
 
 require 'rspec/core/formatters/progress_formatter'
 
-class Dx7Formatter < RSpec::Core::Formatters::ProgressFormatter
+class ShowFailureFastRspecFormatter < RSpec::Core::Formatters::ProgressFormatter
   RSpec::Core::Formatters.register self, :example_failed, :dump_failures, :dump_summary
 
   def project_name
