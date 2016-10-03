@@ -1,7 +1,7 @@
-show-failure-fast-rspec-formatter
-=============
+Show Failure Fast RSpec Formatter
+=================================
 
-This formatter immediately shows the failure message when spec fails. Then you don't need wait the final report to know about failures.
+This formatter immediately shows the failure message when a spec fails. Then you don't need wait the final report to know about the failures.
 
 You can use it directly in the command line:
 
@@ -13,3 +13,11 @@ Or setting the SPEC_OPTS environment variable in your .bash_profile, .zshrc, etc
 
 Or wherever RSpec reads command line configuration options
   <https://www.relishapp.com/rspec/rspec-core/docs/configuration/read-command-line-configuration-options-from-files>
+
+
+Dependency
+==========
+
+You need install terminal-notifier to receive notification on Mac OS.
+
+  <code>brew install terminal-notifier</code>
