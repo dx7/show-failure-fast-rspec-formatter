@@ -46,7 +46,6 @@ class ShowFailureFastRspecFormatter < RSpec::Core::Formatters::ProgressFormatter
 
     def system_notification(message, title, subtitle)
       if RUBY_PLATFORM.match(/darwin/)
-        #`osascript -e 'display notification "#{message}" with title "#{title}"'`
         `terminal-notifier -group 'rspec-#{project_name}' -title '#{title}' -subtitle '#{subtitle}' -message '#{message}'`
       end
     end
