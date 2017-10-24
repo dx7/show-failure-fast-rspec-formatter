@@ -23,7 +23,7 @@ class ShowFailureFastRspecFormatter < RSpec::Core::Formatters::ProgressFormatter
 
   def example_failed(notification)
    output.puts notification.fully_formatted(index)
-   system_notification(notification.description, "Rspec #{project_name}", 'Failure/Error')
+   system_notification('', "Rspec Failed: #{project_name}", notification.description)
   end
 
   def dump_failures(notification)
@@ -33,7 +33,8 @@ class ShowFailureFastRspecFormatter < RSpec::Core::Formatters::ProgressFormatter
   def dump_summary(notification)
     super
     message = notification.fully_formatted(RSpec::Core::Notifications::NullColorizer)
-    system_notification(message.split("\n").reverse.join("\n"), "Rspec #{project_name}", 'Success')
+    summary = message.match(/^[0-9]+ examples, .*$/).to_s
+    system_notification('', "Rspec Summary: #{project_name}", summary)
   end
 
   private
